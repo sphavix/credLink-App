@@ -1,0 +1,47 @@
+<div class="page-container">
+  <mat-card class="onboard-card">
+    <!-- logo area (same as onboarding-personal) -->
+    <div class="logo-block" aria-hidden="true">
+      <img class="onboard-logo" src="assets/images/app-logo-2.png" alt="CredLink logo" />
+    </div>
+
+    <div class="steps-row" aria-hidden="false">
+      <div class="steps-inner">
+        <app-onboarding-steps [current]="3"></app-onboarding-steps>
+      </div>
+    </div>
+    <h2>Application KYC Status</h2>
+    <!-- <div class="timeline">
+      <div class="step" [class.done]="status() !== 'Draft'">
+        <div class="dot"></div>
+        <div>Draft</div>
+      </div>
+      <div class="step" [class.done]="['PendingReview','Approved','ResubmissionRequired'].includes(status())">
+        <div class="dot"></div>
+        <div>Pending Review</div>
+      </div>
+      <div class="step" [class.done]="status() === 'Approved'">
+        <div class="dot"></div>
+        <div>Approved</div>
+      </div>
+      <div class="step" [class.warn]="status() === 'ResubmissionRequired'">
+        <div class="dot"></div>
+        <div>Resubmission Required</div>
+      </div>
+    </div> -->
+    <div>
+      <p>Thank you for your application, it will be reviewed soon. Please check status below or your emails for the
+        feedback.
+      </p>
+    </div>
+    <div class="status-row">
+      <div><strong>Status:</strong></div>
+      <div>
+        <mat-chip-set>
+          <mat-chip [color]="status()==='Approved' ? 'primary' : undefined">{{ status() }}</mat-chip>
+        </mat-chip-set>
+      </div>
+    </div>
+    @if (status() === 'Approved') { <a routerLink="/dashboard">Go to Dashboard</a> }
+  </mat-card>
+</div>

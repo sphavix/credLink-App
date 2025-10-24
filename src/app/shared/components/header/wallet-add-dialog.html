@@ -1,0 +1,64 @@
+<div class="wallet-dialog">
+  <header class="wallet-dialog__header">
+    <div>
+      <h2>Add funds to wallet</h2>
+      <p>{{ summary().accountLabel }}</p>
+    </div>
+    <button mat-icon-button (click)="close()" aria-label="Close dialog">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <section class="wallet-dialog__balance">
+    <span class="wallet-dialog__balance-label">Available balance</span>
+    <strong>{{ balance() | currency:'ZAR':'symbol' }}</strong>
+  </section>
+
+  <section class="wallet-dialog__body">
+    <h3>Deposit with EFT</h3>
+    <p>Select the bank you want to pay into. Banking details will appear below.</p>
+
+    <mat-form-field appearance="outline" class="wallet-dialog__select">
+      <mat-label>Select receiving bank</mat-label>
+      <mat-select [value]="selectedBankId()" (valueChange)="selectedBankId.set($event)">
+        @for (bank of banks(); track bank.id) {
+          <mat-option [value]="bank.id">{{ bank.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (selectedBank(); as bank) {
+      <div class="wallet-dialog__bank-card">
+        <div class="bank-row">
+          <span>Bank</span>
+          <strong>{{ bank.name }}</strong>
+        </div>
+        <div class="bank-row">
+          <span>Account name</span>
+          <strong>{{ bank.accountName }}</strong>
+        </div>
+        <div class="bank-row">
+          <span>Branch code</span>
+          <strong>{{ bank.branchCode }}</strong>
+        </div>
+        <div class="bank-row">
+          <span>Branch name</span>
+          <strong>{{ bank.branchName }}</strong>
+        </div>
+        <div class="bank-row">
+          <span>Account number</span>
+          <strong>{{ bank.accountNumber }}</strong>
+        </div>
+        <div class="bank-row bank-row--reference">
+          <span>Deposit reference</span>
+          <strong>{{ bank.reference }}</strong>
+        </div>
+      </div>
+    }
+  </section>
+
+  <footer class="wallet-dialog__footer">
+    <p>Use the EFT reference exactly as shown so we can allocate your funds quickly.</p>
+    <button mat-flat-button color="primary" (click)="close()">Done</button>
+  </footer>
+</div>

@@ -1,0 +1,139 @@
+.wallet-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 8px 4px 4px;
+  color: #102a23;
+}
+
+.wallet-dialog__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+
+  h2 {
+    margin: 0;
+    font-size: 22px;
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: rgba(16, 42, 35, 0.6);
+  }
+}
+
+.wallet-dialog__balance {
+  background: rgba(16, 107, 103, 0.08);
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.wallet-dialog__balance-label {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(16, 42, 35, 0.6);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.wallet-dialog__balance-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+
+    span {
+      color: rgba(16, 42, 35, 0.65);
+    }
+
+    strong {
+      font-weight: 600;
+    }
+  }
+}
+
+.wallet-dialog__body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  h3 {
+    margin: 0;
+    font-size: 18px;
+  }
+}
+
+.wallet-dialog__amount {
+  width: 100%;
+}
+
+.wallet-dialog__notice {
+  background: rgba(241, 196, 15, 0.2);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #7d6608;
+}
+
+.wallet-dialog__bank-card {
+  border: 1px solid rgba(16, 42, 35, 0.12);
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f8fbfa;
+}
+
+.bank-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+
+  span {
+    color: rgba(16, 42, 35, 0.6);
+  }
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.verified {
+  color: #148f50;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.wallet-dialog__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.footnote {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(16, 42, 35, 0.6);
+}

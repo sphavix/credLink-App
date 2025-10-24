@@ -1,0 +1,90 @@
+<div class="auth-shell">
+  <div class="card" [class.signup]="!isSignIn()">
+    <img class="brand brand--center" src="assets/images/app-logo-2.png" alt="CredLink" />
+     <section class="pane pane--signin">
+       <div class="pane__content">
+        <h1 class="title">Sign in to CredLink</h1>
+
+        <form [formGroup]="signInForm" (ngSubmit)="submitSignIn()" novalidate>
+          <label class="field">
+            <span>Username*</span>
+            <input formControlName="username" type="text" placeholder="Email or username" />
+            @if (signInForm.get('username')?.touched && signInForm.get('username')?.invalid) {
+              <small class="err">Username is required</small>
+            }
+          </label>
+
+          <label class="field">
+            <span>Password*</span>
+            <input formControlName="password" type="password" placeholder="Password" />
+            @if (signInForm.get('password')?.touched && signInForm.get('password')?.invalid) {
+              <small class="err">Password is required</small>
+            }
+          </label>
+
+          <div class="actions actions--center">
+            <button type="submit" class="btn btn--primary btn--large">Sign In</button>
+          </div>
+          @if (signInForm.hasError('invalid')) {
+            <div class="err">Incorrect username or password</div>
+          }
+        </form>
+      </div>
+    </section>
+
+    <!-- RIGHT: Sign-Up -->
+    <section class="pane pane--signup">
+      <div class="pane__content">
+        <h1 class="title">Create Account</h1>
+
+        <form [formGroup]="signUpForm" (ngSubmit)="submitSignUp()" novalidate>
+          <label class="field">
+            <span>Username*</span>
+            <input formControlName="username" type="text" placeholder="Email or username" />
+            @if (signUpForm.get('username')?.touched && signUpForm.get('username')?.invalid) {
+              <small class="err">Username is required</small>
+            } @else if (signUpForm.get('username')?.hasError('taken')) {
+              <small class="err">Username already registered</small>
+            }
+          </label>
+
+          <label class="field">
+            <span>Password*</span>
+            <input formControlName="password" type="password" placeholder="Create password (min 6)" />
+            @if (signUpForm.get('password')?.touched && signUpForm.get('password')?.invalid) {
+              <small class="err">Min length is 6</small>
+            }
+          </label>
+
+          <label class="field">
+            <span>Confirm Password*</span>
+            <input formControlName="confirm" type="password" placeholder="Confirm password" />
+            @if (signUpForm.get('confirm')?.touched && signUpForm.get('confirm')?.hasError('mismatch')) {
+              <small class="err">Passwords do not match</small>
+            }
+          </label>
+
+          <div class="actions actions--center">
+            <button type="submit" class="btn btn--primary btn--large">Sign Up</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- SLIDING OVERLAY (absolute child of .card) -->
+    <!-- Replace your overlay block with this -->
+    <div class="overlay">
+      <div class="overlay__panel overlay__panel--hello">
+        <h2 class="overlay__title">Hello, Friend!</h2>
+        <p class="overlay__copy">Enter your personal details and start your journey with us.</p>
+        <button class="btn btn--outline overlay__cta btn--large " (click)="swap(false)">Sign Up</button>
+      </div>
+
+      <div class="overlay__panel overlay__panel--welcome">
+        <h2 class="overlay__title">Welcome Back!</h2>
+        <p class="overlay__copy">To keep connected with us please login with your personal info.</p>
+        <button class="btn btn--outline overlay__cta btn--large " (click)="swap(true)">Sign In</button>
+      </div>
+    </div>
+  </div>
+</div>

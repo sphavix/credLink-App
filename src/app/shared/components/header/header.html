@@ -1,0 +1,32 @@
+
+<mat-toolbar color="primary">
+  <img class="onboard-logo" src="assets/images/app-logo-2.png" alt="CredLink logo" />
+  <a mat-button routerLink="/borrow">Borrow Money</a>
+  <a mat-button routerLink="/lend">Lend Money</a>
+
+  <span class="spacer"></span>
+
+  <button mat-button class="wallet-trigger" [matMenuTriggerFor]="walletMenu">
+    <mat-icon>account_balance_wallet</mat-icon>
+    <span>{{ walletBalance() | currency:'ZAR':'symbol-narrow' }}</span>
+  </button>
+
+  <mat-menu #walletMenu="matMenu" class="wallet-menu" xPosition="before" yPosition="below">
+    <div class="wallet-menu__content">
+      <div class="wallet-menu__summary">
+        <span class="wallet-menu__label">Wallet balance</span>
+        <strong class="wallet-menu__value">{{ walletBalance() | currency:'ZAR':'symbol' }}</strong>
+      </div>
+      <div class="wallet-menu__actions">
+        <button mat-menu-item (click)="openAddFunds()">
+          <mat-icon>add_circle</mat-icon>
+          <span>Add funds</span>
+        </button>
+        <button mat-menu-item (click)="openWithdraw()">
+          <mat-icon>south</mat-icon>
+          <span>Withdraw funds</span>
+        </button>
+      </div>
+    </div>
+  </mat-menu>
+</mat-toolbar>

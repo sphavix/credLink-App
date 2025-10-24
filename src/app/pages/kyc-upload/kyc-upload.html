@@ -1,0 +1,45 @@
+<div class="page-container">
+  <mat-card class="onboard-card">
+    <!-- logo area (same as onboarding-personal) -->
+    <div class="logo-block" aria-hidden="true">
+      <img class="onboard-logo" src="assets/images/app-logo-2.png" alt="CredLink logo" />
+    </div>
+
+    <div class="steps-row" aria-hidden="false">
+      <div class="steps-inner">
+        <app-onboarding-steps [current]="1"></app-onboarding-steps>
+      </div>
+    </div>
+
+    <h2>Upload KYC Documentation</h2>
+    <div class="docs">
+      @for (d of docs; track d.code) {
+      <div class="doc">
+        <div class="head">
+          <div class="title">{{ d.label }}</div>
+          <mat-chip-set>
+            <mat-chip [color]="uploaded(d.code) ? 'primary' : undefined">{{ uploaded(d.code) ? 'Uploaded' : 'Missing' }}
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+        <div class="body">
+          <div class="hint">{{ d.hint }}</div>
+          <input type="file" #f (change)="onSelect(f.files?.[0], d.code)" />
+        </div>
+      </div>
+      }
+    </div>
+
+   <div class="actions full">
+     <!-- Back to Personal Info -->
+     <a routerLink="/onboarding/personal" aria-label="Back to Personal Info">
+       <button mat-stroked-button color="accent" type="button">Back</button>
+     </a>
+
+     <!-- Continue to KYC Submit -->
+     <a routerLink="/onboarding/submit" aria-label="Continue to KYC submit">
+       <button mat-raised-button color="primary" type="button">Continue</button>
+     </a>
+   </div>
+  </mat-card>
+</div>

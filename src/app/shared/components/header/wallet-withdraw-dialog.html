@@ -1,0 +1,96 @@
+<form class="wallet-dialog" [formGroup]="form" (ngSubmit)="submit()">
+  <header class="wallet-dialog__header">
+    <div>
+      <h2>Withdraw funds</h2>
+      <p>{{ summary().accountLabel }}</p>
+    </div>
+    <button mat-icon-button (click)="close()" aria-label="Close dialog">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <section class="wallet-dialog__balance">
+    <div>
+      <span class="wallet-dialog__balance-label">Available to withdraw</span>
+      <strong>{{ summary().available | currency:'ZAR':'symbol' }}</strong>
+    </div>
+    <ul class="wallet-dialog__balance-list">
+      <li>
+        <span>Pending funds</span>
+        <strong>{{ summary().pending | currency:'ZAR':'symbol' }}</strong>
+      </li>
+      <li>
+        <span>Locked funds</span>
+        <strong>{{ summary().locked | currency:'ZAR':'symbol' }}</strong>
+      </li>
+      <li>
+        <span>Unsettled cash</span>
+        <strong>{{ summary().unsettled | currency:'ZAR':'symbol' }}</strong>
+      </li>
+    </ul>
+  </section>
+
+  <section class="wallet-dialog__body">
+    <h3>1. Enter withdrawal amount</h3>
+    <mat-form-field appearance="outline" class="wallet-dialog__amount">
+      <mat-label>Amount to withdraw</mat-label>
+      <input matInput type="number" formControlName="amount" min="0" />
+      <span matTextPrefix>R&nbsp;</span>
+      @if (amount?.invalid && amount?.touched) {
+        <mat-error>
+          @if (amount?.hasError('exceedsAvailable')) {
+            Amount cannot exceed {{ summary().available | currency:'ZAR':'symbol' }}.
+          } @else {
+            Enter an amount greater than zero.
+          }
+        </mat-error>
+      }
+    </mat-form-field>
+
+    <div class="wallet-dialog__notice">
+      Requests received after 2pm (Mon - Fri) or on weekends/public holidays will be processed on
+      the next business day.
+    </div>
+
+    <h3>2. Confirm your bank details</h3>
+    <div class="wallet-dialog__bank-card">
+      <div class="bank-row">
+        <span>Account name</span>
+        <strong>{{ profile().accountName }}</strong>
+      </div>
+      <div class="bank-row">
+        <span>Bank</span>
+        <strong>{{ profile().bank }}</strong>
+      </div>
+      <div class="bank-row">
+        <span>Branch code</span>
+        <strong>{{ profile().branchCode }}</strong>
+      </div>
+      <div class="bank-row">
+        <span>Branch name</span>
+        <strong>{{ profile().branchName }}</strong>
+      </div>
+      <div class="bank-row">
+        <span>Account number</span>
+        <strong>{{ profile().accountNumber }}</strong>
+      </div>
+      <div class="bank-row">
+        <span>FICA verified</span>
+        <strong class="verified">{{ profile().ficaVerified ? 'Yes' : 'No' }}</strong>
+      </div>
+    </div>
+
+    <mat-checkbox formControlName="confirm">I confirm the bank details above are correct</mat-checkbox>
+  </section>
+
+  <footer class="wallet-dialog__footer">
+    <div class="footer-buttons">
+      <button mat-button type="button" (click)="close()">Cancel</button>
+      <button mat-flat-button color="primary" type="submit">Withdraw</button>
+    </div>
+    <p class="footnote">
+      Confirmed transactions cannot be reversed or cancelled. Use the correct reference and ensure
+      your bank details are accurate to avoid settlement delays.
+    </p>
+  </footer>
+</form>

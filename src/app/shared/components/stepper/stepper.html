@@ -1,0 +1,10 @@
+
+<div class="path">
+  @for (item of items; let i = $index; track i) {
+    <div class="node" [class.active]="i <= current()">
+      <div class="circle">{{ i+1 }}</div>
+      <div class="label">{{ item }}</div>
+      @if (i < items.length - 1) { <div class="line"></div> }
+    </div>
+  }
+</div>

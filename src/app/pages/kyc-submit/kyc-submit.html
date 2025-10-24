@@ -1,0 +1,34 @@
+<div class="page-container">
+  <mat-card class="onboard-card">
+    <!-- logo area (same as onboarding-personal) -->
+    <div class="logo-block" aria-hidden="true">
+      <img class="onboard-logo" src="assets/images/app-logo-2.png" alt="CredLink logo" />
+    </div>
+
+    <div class="steps-row" aria-hidden="false">
+      <div class="steps-inner">
+        <app-onboarding-steps [current]="2"></app-onboarding-steps>
+      </div>
+    </div>
+    <h2>Submit KYC Documentation</h2>
+    <ul class="checklist">
+      @for (r of requiredDocs(); track r) {
+      <li><span class="name">{{ r }}</span>
+        <span class="state" [class.ok]="hasUploaded(r)"
+          [class.missing]="!hasUploaded(r)">{{ hasUploaded(r) ? 'Ready' : 'Missing' }}</span></li>
+      }
+    </ul>
+    <mat-checkbox [(ngModel)]="agree">I certify these documents are accurate and consent to verification.</mat-checkbox>
+    <div class="actions full">
+    <!-- Back to KYC Upload -->
+    <button mat-stroked-button color="accent" type="button" routerLink="/onboarding/kyc">
+      Back
+    </button>
+
+    <!-- Submit for Review -->
+    <button mat-raised-button color="primary" [disabled]="!canSubmit()" (click)="submit()">
+      Submit for Review
+    </button>
+    </div>
+  </mat-card>
+</div>
