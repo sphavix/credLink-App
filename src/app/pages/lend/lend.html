@@ -1,0 +1,183 @@
+<div class="lend-page">
+  <section class="wallet-summary">
+    <div>
+      <h1>Lender Wallet</h1>
+      <p>Available funds to allocate into new loan offers.</p>
+    </div>
+    <div class="wallet-summary__amount">
+      {{ walletAvailable() | currency:'ZAR':'symbol' }}
+    </div>
+  </section>
+
+  <mat-card class="create-card">
+    <div class="create-card__header">
+      <div>
+        <h2>{{ editingOffer() ? 'Update loan offer' : 'Create loan offer' }}</h2>
+        <p>
+          Funds are reserved from your wallet once you publish. Projected balance after publishing:
+          <strong [class.negative]="remainingBalance() < 0">{{ remainingBalance() | currency:'ZAR':'symbol' }}</strong>
+        </p>
+      </div>
+      <button mat-stroked-button color="primary" type="button" (click)="resetForm()" *ngIf="editingOffer()">
+        Cancel edit
+      </button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="create-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Loan name</mat-label>
+        <input matInput formControlName="name" placeholder="e.g. Growth SME Working Capital" />
+        @if (form.get('name')?.invalid && form.get('name')?.touched) {
+          <mat-error>Enter a descriptive loan name.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Amount available (R)</mat-label>
+        <input matInput type="number" formControlName="amount" min="0" />
+        @if (form.get('amount')?.hasError('exceedsWallet')) {
+          <mat-error>
+            Amount cannot exceed wallet balance ({{ form.get('amount')?.getError('exceedsWallet').available | currency:'ZAR':'symbol' }}).
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Interest rate (APR %)</mat-label>
+        <input matInput type="number" formControlName="rate" min="1" max="30" />
+        @if (form.get('rate')?.hasError('max')) {
+          <mat-error>Interest rate cannot exceed 30%.</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="duration-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Minimum duration (months)</mat-label>
+          <input matInput type="number" formControlName="minDurationMonths" min="1" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Maximum duration (months)</mat-label>
+          <input matInput type="number" formControlName="maxDurationMonths" min="1" />
+        </mat-form-field>
+      </div>
+
+      <div class="criteria-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Minimum credit score</mat-label>
+          <input matInput type="number" formControlName="minCreditScore" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Minimum monthly income (R)</mat-label>
+          <input matInput type="number" formControlName="minMonthlyIncome" />
+        </mat-form-field>
+      </div>
+
+      <div class="form-actions">
+        <button mat-flat-button color="primary" type="submit">
+          {{ editingOffer() ? 'Update loan offer' : 'Publish loan offer' }}
+        </button>
+      </div>
+    </form>
+
+    @if (submitError()) {
+      <div class="alert">{{ submitError() }}</div>
+    }
+  </mat-card>
+
+  <mat-card class="offers-card">
+    <div class="offers-card__header">
+      <div>
+        <h2>Loan Marketplace</h2>
+        <p class="section-subtitle">{{ offers().length }} active template{{ offers().length === 1 ? '' : 's' }}.</p>
+      </div>
+      @if (totalPages() > 1) {
+        <div class="pager">
+          <button mat-icon-button (click)="prevPage()" [disabled]="currentPage() === 0">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <span>Page {{ currentPage() + 1 }} of {{ totalPages() }}</span>
+          <button mat-icon-button (click)="nextPage()" [disabled]="currentPage() >= totalPages() - 1">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+      }
+    </div>
+
+    @if (!offers().length) {
+      <div class="empty-state">
+        <h3>No loan offers yet</h3>
+        <p>Create a loan above to start lending capital to vetted borrowers.</p>
+      </div>
+    } @else {
+      <div class="loan-list">
+        @for (offer of pagedOffers(); track offer.id) {
+          <article class="loan-card">
+            <header class="loan-card__header">
+              <div>
+                <h3>{{ offer.name }}</h3>
+                <p>Created {{ offer.createdAt | date:'mediumDate' }}</p>
+              </div>
+              <div class="loan-card__amount">{{ offer.amount | currency:'ZAR':'symbol' }}</div>
+            </header>
+
+      <div class="loan-card__meta">
+              <div>
+                <span class="label">Interest rate</span>
+                <strong>{{ offer.rate }}%</strong>
+              </div>
+              <div>
+                <span class="label">Duration window</span>
+                <strong>{{ offer.minDurationMonths }} - {{ offer.maxDurationMonths }} months</strong>
+              </div>
+              <div>
+                <span class="label">Minimum credit score</span>
+                <strong>{{ offer.minCreditScore || 'Not specified' }}</strong>
+              </div>
+              <div>
+                <span class="label">Minimum monthly income</span>
+                <strong>{{ offer.minMonthlyIncome ? (offer.minMonthlyIncome | currency:'ZAR':'symbol') : 'Not specified' }}</strong>
+              </div>
+            </div>
+
+            <footer class="loan-card__footer">
+              <div class="chip-bar">
+                <span class="chip chip--status">{{ offer.status === 'Open' ? 'New listing' : offer.status }}</span>
+                <div class="chip-bar__actions">
+                  <button type="button" class="chip chip--action" (click)="editOffer(offer)" [disabled]="!canModify(offer.id)">
+                    Update loan
+                  </button>
+                  <button type="button" class="chip chip--danger" (click)="withdraw(offer.id)" [disabled]="!canModify(offer.id)">
+                    Withdraw listing
+                  </button>
+                </div>
+              </div>
+            </footer>
+
+            <section class="loan-card__requests">
+              <h4>Borrower requests</h4>
+              @if (!requestsFor(offer.id).length) {
+                <p class="muted">No borrower requests yet.</p>
+              } @else {
+                @for (req of requestsFor(offer.id); track req.id) {
+                  <div class="request">
+                    <div>
+                      <strong>{{ req.borrowerId.slice(0, 8) }}…</strong>
+                      <span>Status: {{ req.status }}</span>
+                      <span>Requested rate: {{ req.requestedRate || offer.rate }}%</span>
+                    </div>
+                    @if (req.status === 'Pending') {
+                      <div class="request__actions">
+                        <button mat-button color="primary" (click)="decide(offer.id, req.id, true)">Approve</button>
+                        <button mat-button color="warn" (click)="decide(offer.id, req.id, false)">Decline</button>
+                      </div>
+                    }
+                  </div>
+                }
+              }
+            </section>
+          </article>
+        }
+      </div>
+    }
+  </mat-card>
+</div>

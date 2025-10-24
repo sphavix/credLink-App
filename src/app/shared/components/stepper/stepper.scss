@@ -1,0 +1,43 @@
+.path {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap
+}
+
+.node {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #4B5563
+}
+
+.circle {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  border: 2px solid #0F6B67;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #0F6B67;
+  background: #fff
+}
+
+.node.active .circle {
+  background: #2BB89A;
+  border-color: #2BB89A;
+  color: #fff
+}
+
+.line {
+  width: 48px;
+  height: 2px;
+  background: #cbd5e1;
+  border-radius: 2px
+}
+
+.label {
+  font-size: 13px
+}
