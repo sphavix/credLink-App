@@ -16,38 +16,23 @@ jobs:
     name: Build and Deploy Job
     steps:
       
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Use Node.js (adjust for your target Angular)
+      - name: Set up Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Consider 20.19+ for Angular 20; verify with official guide
+          node-version: '22'
           cache: 'npm'
 
-      - name: Show current versions
-        run: |
-          node -v
-          npm -v
+      - name: Verify Node.js version
+        run: node -v
 
-      - name: Install latest Angular CLI globally (optional)
-        run: |
-          npm uninstall -g @angular/cli || true
-          npm install -g @angular/cli@latest
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Show ng update suggestions (informational)
-        run: |
-          npx ng update
-
-      - name: Install RxJS (common requirement)
-        run: |
-          npm install rxjs@^7 --save
-        continue-on-error: true
-
-      - name: Reinstall & Build to catch issues
-        run: |
-          npm ci
-          npx ng build --configuration production
+      - name: Build Angular app
+        run: npm run build
 
       - uses: actions/checkout@v3
         with:
@@ -78,6 +63,7 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_LEMON_SMOKE_0F0B0A110 }}
           action: "close"
+
 
 
 
