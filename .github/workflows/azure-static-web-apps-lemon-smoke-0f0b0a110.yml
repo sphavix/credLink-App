@@ -15,6 +15,103 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
+      
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js (adjust for your target Angular)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Consider 20.19+ for Angular 20; verify with official guide
+          cache: 'npm'
+
+      - name: Show current versions
+        run: |
+          node -v
+          npm -v
+
+      - name: Install latest Angular CLI globally (optional)
+        run: |
+          npm uninstall -g @angular/cli || true
+          npm install -g @angular/cli@latest
+
+      - name: Install project dependencies (clean)
+        run: |
+          rm -rf node_modules package-lock.json
+          npm ci
+
+      - name: Determine branch name
+        id: vars
+        run: echo "branch=chore/upgrade-angular-${{ github.event.inputs.targetMajor }}" >> $GITHUB_OUTPUT
+
+      - name: Create upgrade branch
+        run: |
+          git checkout -b "${{ steps.vars.outputs.branch }}"
+
+      - name: Run ng update (core + CLI)
+        run: |
+          npx ng update @angular/cli@^${{ github.event.inputs.targetMajor }} @angular/core@^${{ github.event.inputs.targetMajor }} --allow-dirty=false --verbose
+
+      - name: Optional Update Angular MaterialCDK
+        if: ${{ github.event.inputs.material == 'true' }}
+        run: |
+          npx ng update @angular/material@^${{ github.event.inputs.targetMajor }} @angular/cdk@^${{ github.event.inputs.targetMajor }} --verbose || true
+
+      - name: Show ng update suggestions (informational)
+        run: |
+          npx ng update
+
+      - name: Install RxJS (common requirement)
+        run: |
+          npm install rxjs@^7 --save
+        continue-on-error: true
+
+      - name: Reinstall & Build to catch issues
+        run: |
+          npm ci
+          npx ng build --configuration production
+
+      - name: Run unit tests (optional)
+        if: ${{ github.event.inputs.runTests == 'true' }}
+        run: |
+          npx ng test --watch=false --browsers=ChromeHeadless || npx ng test --watch=false
+        continue-on-error: true
+
+      - name: Commit changes
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: upgrade Angular to ^${{ github.event.inputs.targetMajor }} via ng update"
+          fi
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: ${{ steps.vars.outputs.branch }}
+          title: "chore: upgrade Angular to ^${{ github.event.inputs.targetMajor }}"
+          body: |
+            This PR upgrades Angular to **^${{ github.event.inputs.targetMajor }}** using `ng update`.
+
+            ### What this does
+            - `ng update @angular/cli @angular/core` to ^${{ github.event.inputs.targetMajor }}
+            - (optional) `@angular/material` / `@angular/cdk` to matching major
+            - Rebuild project and run tests
+
+            ### Next steps
+            - Review the Angular **Update Guide** for any manual steps between your current and target versions.
+            - Verify Node/TypeScript compatibility and SSR/hydration if applicable.
+
+            References:
+            - `ng update` official docs [1](https://learn.microsoft.com/en-us/azure/static-web-apps/deployment-token-management)
+            - Angular Update Guide (choose your from→to) [2](https://dut4lifeac-my.sharepoint.com/personal/25062212_dut4life_ac_za/_layouts/15/Doc.aspx?sourcedoc=%7BAADE740E-189F-4742-AF16-98069A3BCD3B%7D&file=Application%20UI%20(Screenshots).docx&action=default&mobileredirect=true).docx&action=default&mobileredirect=true)
+            - Versioning/compatibility overview [3](https://versionlog.com/angular/19.0/)
+          commit-message: "chore: upgrade Angular to ^${{ github.event.inputs.targetMajor }}"
+          labels: |
+            dependencies
+            angular-upgrade
+
       - uses: actions/checkout@v3
         with:
           submodules: true
@@ -44,4 +141,5 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_LEMON_SMOKE_0F0B0A110 }}
           action: "close"
+
 
